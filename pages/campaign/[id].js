@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { executeAction } from '../../src/utils/gameLogic';
+import { campaignChannel } from '../../src/utils/broadcast';
 import styles from '../../styles/Campaign.module.css';
 
 export default function Campaign() {
@@ -11,6 +12,7 @@ export default function Campaign() {
   const [gameState, setGameState] = useState(null);
   const [log, setLog] = useState([]);
 
+  // Função para carregar os dados da campanha do backend
   const fetchCampaign = async () => {
     try {
       const res = await fetch(`/api/campaign/${id}`);
@@ -27,19 +29,32 @@ export default function Campaign() {
     }
   };
 
+  // Carrega os dados iniciais da campanha assim que o id estiver disponível
   useEffect(() => {
     if (!id) return;
     fetchCampaign();
   }, [id]);
 
+  // Configura o BroadcastChannel para receber atualizações em outras abas
   useEffect(() => {
     if (!id) return;
-    const intervalId = setInterval(() => {
-      fetchCampaign();
-    }, 5000);
-    return () => clearInterval(intervalId);
+
+    // Quando uma mensagem é recebida, atualiza o estado se a mensagem for para a campanha atual
+    campaignChannel.onmessage = (event) => {
+      const { campaignId, gameState: updatedGameState, log: updatedLog } = event.data;
+      if (campaignId === id) {
+        setGameState(updatedGameState);
+        setLog(updatedLog);
+      }
+    };
+
+    // Opcional: Limpa o listener ao desmontar
+    return () => {
+      campaignChannel.onmessage = null;
+    };
   }, [id]);
 
+  // Atualiza o backend (persistência) com os novos dados da campanha
   const updateCampaignBackend = async (newGameState, newLog) => {
     try {
       await fetch(`/api/campaign/${id}`, {
@@ -52,12 +67,25 @@ export default function Campaign() {
     }
   };
 
+  // Função que trata as ações dos jogadores
   const handleAction = (action) => {
+    // Executa a ação usando a lógica definida (por exemplo, rolar dados, calcular dano, etc.)
     const { newGameState, message } = executeAction(action, gameState);
     const newLog = [...log, message];
+
+    // Atualiza os estados locais
     setGameState(newGameState);
     setLog(newLog);
+
+    // Atualiza o backend com os novos dados
     updateCampaignBackend(newGameState, newLog);
+
+    // Emite a atualização para as demais abas através do BroadcastChannel
+    campaignChannel.postMessage({
+      campaignId: id,
+      gameState: newGameState,
+      log: newLog,
+    });
   };
 
   if (!campaignData || !gameState) {
