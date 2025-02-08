@@ -1,7 +1,16 @@
-// pages/api/campaign/index.js
 import { openDB } from '../../../src/utils/db';
 
 export default async function handler(req, res) {
+  // Definir os cabeçalhos CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Responde à requisição preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   const db = await openDB();
 
   if (req.method === 'POST') {
@@ -27,7 +36,6 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: error.message });
     }
   } else if (req.method === 'GET') {
-    // Retorna todas as campanhas (para testes ou listagem)
     try {
       const campaigns = await db.all('SELECT * FROM campaigns');
       return res.status(200).json({ campaigns });
@@ -35,7 +43,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: error.message });
     }
   } else {
-    res.setHeader('Allow', ['GET', 'POST']);
+    res.setHeader('Allow', ['GET', 'POST', 'OPTIONS']);
     return res.status(405).end(`Método ${req.method} não permitido`);
   }
 }

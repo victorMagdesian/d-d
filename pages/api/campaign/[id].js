@@ -1,7 +1,16 @@
-// pages/api/campaign/[id].js
 import { openDB } from '../../../src/utils/db';
 
 export default async function handler(req, res) {
+  // Definir os cabeçalhos CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Responde à requisição preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   const db = await openDB();
   const { id } = req.query;
 
@@ -38,7 +47,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: error.message });
     }
   } else {
-    res.setHeader('Allow', ['GET', 'PUT']);
+    res.setHeader('Allow', ['GET', 'PUT', 'OPTIONS']);
     return res.status(405).end(`Método ${req.method} não permitido`);
   }
 }
