@@ -1,0 +1,54 @@
+.container {
+    max-width: 800px;
+    margin: 30px auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  
+  .title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .stateSection,
+  .logSection,
+  .actionsSection {
+    margin-bottom: 20px;
+  }
+  
+  .stateSection h2,
+  .logSection h2,
+  .actionsSection h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .logSection ul {
+    list-style: disc;
+    padding-left: 20px;
+  }
+  
+  .actionButton {
+    background-color: #0070f3;
+    color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  .actionButton:hover {
+    background-color: #005bb5;
+  }
+  
+  .loading {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.2rem;
+  }
+  

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import styles from '../styles/CampaignSetup.module.css';
 
 export default function CampaignSetup({ onStart }) {
   const [campaignName, setCampaignName] = useState('');
@@ -16,41 +17,54 @@ export default function CampaignSetup({ onStart }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Aqui, você pode incluir mais validações ou preparar os dados conforme necessário.
     onStart({ campaignName, players });
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <div>
-        <label>Nome da Campanha: </label>
+      <div className={styles.formGroup}>
+        <label>Nome da Campanha:</label>
         <input
           type="text"
           value={campaignName}
           onChange={(e) => setCampaignName(e.target.value)}
           required
+          className={styles.input}
         />
       </div>
       {players.map((player, index) => (
-        <div key={index}>
-          <label>Jogador {index + 1} Nome: </label>
+        <div key={index} className={styles.playerGroup}>
+          <p>Jogador {index + 1}</p>
+          <label>Nome:</label>
           <input
             type="text"
             value={player.name}
             onChange={(e) => handlePlayerChange(index, 'name', e.target.value)}
             required
+            className={styles.input}
           />
-          <label>Classe: </label>
+          <label>Classe:</label>
           <input
             type="text"
             value={player.class}
             onChange={(e) => handlePlayerChange(index, 'class', e.target.value)}
             required
+            className={styles.input}
           />
         </div>
       ))}
-      <button type="button" onClick={addPlayer}>Adicionar Jogador</button>
-      <button type="submit">Iniciar Campanha</button>
+      <div className={styles.buttonGroup}>
+        <button
+          type="button"
+          onClick={addPlayer}
+          className={styles.button}
+        >
+          Adicionar Jogador
+        </button>
+        <button type="submit" className={styles.buttonPrimary}>
+          Iniciar Campanha
+        </button>
+      </div>
     </form>
   );
 }
