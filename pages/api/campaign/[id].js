@@ -1,12 +1,11 @@
 import { openDB } from '../../../src/utils/db';
 
 export default async function handler(req, res) {
-  // Definir os cabeçalhos CORS
+  // Configura os cabeçalhos CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Responde à requisição preflight
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -23,7 +22,6 @@ export default async function handler(req, res) {
       if (!campaign) {
         return res.status(404).json({ message: 'Campanha não encontrada' });
       }
-      // Converte os campos JSON de volta para objeto
       campaign.players = JSON.parse(campaign.players);
       campaign.gameState = JSON.parse(campaign.gameState);
       campaign.log = JSON.parse(campaign.log);
@@ -40,9 +38,7 @@ export default async function handler(req, res) {
         JSON.stringify(log),
         id
       );
-      return res
-        .status(200)
-        .json({ message: 'Campanha atualizada com sucesso!' });
+      return res.status(200).json({ message: 'Campanha atualizada com sucesso!' });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }

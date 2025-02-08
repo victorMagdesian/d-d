@@ -1,10 +1,12 @@
+// src/utils/db.js
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 
 // Função que abre (ou cria) o banco de dados e garante que a tabela de campanhas exista.
 export async function openDB() {
   const db = await open({
-    filename: './database.sqlite',
+    // Use a pasta /tmp em produção no Vercel; localmente pode continuar usando './database.sqlite'
+    filename: process.env.NODE_ENV === 'production' ? '/tmp/database.sqlite' : './database.sqlite',
     driver: sqlite3.Database,
   });
 
